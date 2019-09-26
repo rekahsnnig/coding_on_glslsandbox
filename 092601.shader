@@ -82,6 +82,11 @@ vec3 getNormal(vec3 p)
 	));
 }
 
+vec3 hsv(float h, float s, float v)
+{
+	return ((clamp(abs(fract(h + vec3(0.,2.,1.)/3.)*6.-3.)-1.,0.,1.)-1.)*s+1.)*v;
+}
+
 void main( void ) 
 {
 	vec2 p = ( gl_FragCoord.xy * 2.- resolution.xy )/min(resolution.x,resolution.y);
@@ -127,7 +132,13 @@ void main( void )
 	}
 	
 	color = vec3(ac/100.);
-	color *= dot(normal,light);
+	
+	float h = fract(sin(ac/100.));
+	float s = 1.;
+	float v = 1./ac;
+	
+	color = hsv(h,s,v);
+	color = color * pow(dot(normal,light),2.);
 	gl_FragColor = vec4( color, 1. );
 
 }
